@@ -54,6 +54,7 @@ def encabezado_tablas():
 # Tablas para los símbolos y errores
 tabla_simbolos = []
 tabla_errores = []
+linea_actual = 1
 # Tabla de transiciones
 tabla=[[1,2,"E",6,8,7,"B","F"],
        ["E",2,"E","E","E","E","B","F"],
@@ -78,9 +79,12 @@ for character in cadena:
     charcaracter = caracter(character)
     estado = tabla[estado][charcaracter]
 
+    if character == ";":
+        linea_actual += 1
+
     if estado == "E":
         almacen.append(character)
-        tabla_errores.append(almacen)
+        tabla_errores.append({"Línea": linea_actual, "Cadena": ''.join(almacen)})
         almacen = []
         estado = 0
     else:
@@ -98,11 +102,11 @@ for character in cadena:
             tipo = "Asignacion"
         elif estado == 8:
             tipo = "Operador"
-        tabla_simbolos.append({"Símbolo": ''.join(almacen), "Tipo de Dato": tipo})
+        tabla_simbolos.append({"Línea": linea_actual, "Símbolo": ''.join(almacen), "Tipo de Dato": tipo})
         almacen = []
         estado = 0
     elif estado == "B":
-        tabla_errores.append({''.join(almacen): "Cadena no válida"})
+        tabla_errores.append({"Línea": linea_actual, "Cadena": ''.join(almacen)})
         almacen = []
         estado = 0
 
@@ -110,10 +114,10 @@ for character in cadena:
 print("+--------------------- Tabla de Símbolos ----------------------+")
 encabezado_tablas()
 for simbolo in tabla_simbolos:
-    print(f"|     {simbolo['Símbolo']}{' '*(14-len(simbolo['Símbolo']))} | {simbolo['Tipo de Dato']}{' '*(23-len(simbolo['Tipo de Dato']))} |")
+    print(f"| {simbolo['Símbolo']} | {simbolo['Tipo de Dato']} |")
 
 print("+---------------------- Tabla de Errores ----------------------+")
 encabezado_tablas()
 for error in tabla_errores:
     for key, value in error.items():
-        print(f"|     {key}{' '*(15-len(key))} | {value}{' '*(24-len(value))} |")
+        print(f"| {key} | {value} |")
